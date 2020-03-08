@@ -1,0 +1,8 @@
+sphfile
+numpy
+matplotlib
+librosa
+json5
+torch==1.4.0
+pypesq
+pystoi
