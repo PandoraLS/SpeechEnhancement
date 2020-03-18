@@ -5,6 +5,8 @@ import torch
 import numpy as np
 import json5
 from pathlib import Path
+from util import visualization
+from util.utils import prepare_empty_dir
 
 class BaseTrainer:
     def __init__(self, config, resume, model, optimizer, loss_function):
@@ -33,5 +35,18 @@ class BaseTrainer:
         self.root_dir = Path(config["root_dir"]).expanduser().absolute() / config["experiment_name"] # 这一步是什么意思
         self.checkpoints_dir = self.root_dir / "checkpoints"
         self.logs_dir = self.root_dir / "logs"
+        prepare_empty_dir([self.checkpoints_dir,self.logs_dir],resume=resume)
         
+        self.writer = visualization.writer(self.logs_dir.as_posix())
+        self.writer.add_text(
+            tag="Configuration",
+            text_string=f"<pre> \n{json5.dumps(config, indent=4, sort_keys=False)}  \n</pre>",
+            global_step=1
+        )
+        
+        if resume:self._resume_checkpoint()
+        
+        
+        
+    def _resume_checkpoint(self):
         pass

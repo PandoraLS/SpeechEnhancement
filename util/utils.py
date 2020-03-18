@@ -67,6 +67,7 @@ def create_data_list(cleanRoot, noisyRoot):
     f_dst.close()
     print("文件总数量:", count)
 
+
 def sample_fixed_length_data_aligned(data_a, data_b, sample_length):
     """
     sampling with fixed-length from tow waveform
@@ -83,20 +84,36 @@ def sample_fixed_length_data_aligned(data_a, data_b, sample_length):
     end = start + sample_length
     return data_a[start:end], data_b[start:end]
 
-def caculate_length(floder):
-    files = os.listdir(floder)
-    count = 0
-    for file in files:
-        audio, _ = librosa.load(floder + '/' +file,sr=16000)
-        if len(audio) >= 16384:
-            count += 1
-    print(count)
+
+def prepare_empty_dir(dirs, resume=False):
+    """
+    if resume experiment, assert the dirs exist,
+    if not resume experiment, make dirs.
+    :param dirs (list): directors list 
+    :param resume (bool):  是否继续试验，默认是False
+    :return: 
+    """
+    for dir_path in dirs:
+        if resume:
+            assert dir_path.exists()
+        else:
+            dir_path.mkdir(parents=True, exist_ok=True)
+
+
+# def caculate_length(floder):
+#     files = os.listdir(floder)
+#     count = 0
+#     for file in files:
+#         audio, _ = librosa.load(floder + '/' +file,sr=16000)
+#         if len(audio) >= 16384:
+#             count += 1
+#     print(count)
 
 if __name__ == '__main__':
     pass
-    cleanRoot = '/home/lisen/uestc/Research/Dataset/ToyData/train_clean'
+    # cleanRoot = '/home/lisen/uestc/Research/Dataset/ToyData/train_clean'
     # noisyRoot = '/home/lisen/uestc/Research/Dataset/ToyData/val_babble_0db'
     # create_data_list(cleanRoot, noisyRoot)
 
     # timit_trans()
-    caculate_length(cleanRoot)
+    # caculate_length(cleanRoot)

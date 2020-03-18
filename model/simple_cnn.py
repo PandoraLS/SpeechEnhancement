@@ -29,7 +29,8 @@ class base_cnn(nn.Module):
 
 
 if __name__ == '__main__':
-    inpt = torch.rand(2, 16384)
-    Model = base_cnn()
+    # 默认情况下是使用gpu的方式
+    inpt = torch.rand(2, 16384).cuda()
+    Model = base_cnn().cuda()
     output = Model(inpt)
     print(output.shape)
