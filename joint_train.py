@@ -14,6 +14,8 @@ from trainer.trainer import JointTrainer
 # TODO 目前还未将joint_loss_function写成一个总的Class，只是嵌入到了JointTrainer中了，
 #  下一步需要调整为一个大的class，并且匹配BaseTrainer中的loss_function
 # TODO 训练过程实际上可以修改为学习率逐渐减小的过程
+# TODO 增强后的语音如何保存下来
+# TODO UNet系列方法的原理与效果
 def main(config, resume):
     
     torch.manual_seed(int(config["seed"]))  # both CPU and CUDA
