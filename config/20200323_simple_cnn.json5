@@ -1,0 +1,62 @@
+{
+    "seed": 0,
+    "description": "",
+    "root_dir": "~/uestc/xiaomi_code/SpeechEnhancement",
+    "cudnn_deterministic": false,
+    "trainer": {
+        "epochs": 200,
+        "save_checkpoint_interval": 10,
+        "validation": {
+            "interval": 10,
+            "find_max": true,
+            "custom": {
+                "visualize_audio_limit": 20,
+                "visualize_waveform_limit": 20,
+                "visualize_spectrogram_limit": 20,
+                "sample_length": 16384
+            }
+        }
+    },
+    "model": {
+        "module": "model.simple_cnn",
+        "main": "BaseCNN",
+        "args": {}
+    },
+    "loss_function": {
+        "module": "util.loss",
+        "main": "mse_loss",
+        "args": {}
+    },
+    "optimizer": {
+        "lr": 1e-4,
+        "beta1": 0.9,
+        "beta2": 0.999
+    },
+    "train_dataset": {
+        "module": "dataset.waveform_dataset",
+        "main": "WaveformDataset",
+        "args": {
+            "dataset": "~/uestc/xiaomi_code/SpeechEnhancement/dataset/train.txt",
+            "limit": null,
+            "offset": 0,
+            "sample_length": 16384,
+            "train": true
+        }
+    },
+    "validation_dataset": {
+        "module": "dataset.waveform_dataset",
+        "main": "WaveformDataset",
+        "args": {
+            "dataset": "~/uestc/xiaomi_code/SpeechEnhancement/dataset/val.txt",
+            "limit": 400,
+            "offset": 0,
+            "train": false
+        }
+    },
+    "train_dataloader": {
+        "batch_size": 600,
+        "num_workers": 40,
+        "shuffle": true,
+        "pin_memory": true
+    }
+}
