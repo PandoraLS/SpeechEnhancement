@@ -6,6 +6,11 @@
     "trainer": {
         "epochs": 200,
         "save_checkpoint_interval": 10,
+        "joint": {
+            "stoi_factor": 1.,
+            "sdr_factor": 5000.,
+            "rmse_factor": 10.
+        },
         "validation": {
             "interval": 10,
             "find_max": true,
@@ -54,7 +59,7 @@
         }
     },
     "train_dataloader": {
-        "batch_size": 600,
+        "batch_size": 100,
         "num_workers": 40,
         "shuffle": true,
         "pin_memory": true

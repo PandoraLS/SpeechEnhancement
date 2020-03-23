@@ -67,6 +67,7 @@ class WaveformDataset(Dataset):
         return noisy.reshape(1, -1), clean.reshape(1, -1), name
     
 if __name__ == '__main__':
+    from pprint import pprint
     wave_data = WaveformDataset(
         dataset="train.txt",
         sample_length=16384,
@@ -74,8 +75,8 @@ if __name__ == '__main__':
     )
     dataset_list_length = wave_data.__len__()
     dataset_list = wave_data.dataset_list
-    print(dataset_list_length)
-    print(dataset_list)
+    pprint(dataset_list_length)
+    pprint(dataset_list)
     
     
     

@@ -2,29 +2,90 @@
 # Author：lisen
 # Date：20-3-7 下午4:44
 import os
-from sphfile import SPHFile
 import glob
+import time
 import numpy as np
+import importlib
+from sphfile import SPHFile
+from pypesq import pesq
+from pystoi.stoi import stoi
 import librosa
 
 
-def timit_trans():
-    # 下载的TIMIT可能无法直接使用,需要用此脚本转换一下
-    path = '/home/lisen/uestc/Research/Dataset/TIMIT/TRAIN/*/*/*.WAV'
-    sph_files = glob.glob(path)
-    print(len(sph_files), "train utterences")
-    for i in sph_files:
-        sph = SPHFile(i)
-        sph.write_wav(filename=i.replace(".WAV", "_.wav"))  # _不能删除
-        os.remove(i)
-    path = '/home/lisen/uestc/Research/Dataset/TIMIT/TEST/*/*/*.WAV'
-    sph_files_test = glob.glob(path)
-    print(len(sph_files_test), "test utterences")
-    for i in sph_files_test:
-        sph = SPHFile(i)
-        sph.write_wav(filename=i.replace(".WAV", "_.wav"))  # _不能删除
-        os.remove(i)
-    print("Completed")
+class ExecutionTime:
+    """
+    Usage:
+        timer = ExecutionTime()
+        
+        <Something...>
+        
+        print(f"Finished in {timer.duration()} seconds.")
+    """
+
+    def __init__(self):
+        self.start_time = time.time()
+
+    def duratioin(self):
+        return time.time() - self.start_time
+
+
+def initialize_config(module_cfg):
+    """
+    根据配置项，动态加载对应的模块， 并将参数传入模块内部的制定函数
+    eg. 配置文件如下:
+        module_cfg = {
+            "module": "models.unet", 
+            "main": "UNet",
+            "args": {...}
+        }
+    1. 加载 type 参数对应的模块
+    2. 调用(实例化)模块内部对应 main 参数的函数(类)
+    3. 再调用(实例化)时将 args 参数输入函数(类)
+    
+    
+    :param module_cfg: 配置信息， 参见json文件
+    :return: 实例化后的函数(类)
+    """
+    module = importlib.import_module(module_cfg["module"])
+    return getattr(module, module_cfg["main"])(**module_cfg["args"])
+
+
+def prepare_empty_dir(dirs, resume=False):
+    """
+    if resume experiment, assert the dirs exist,
+    if not resume experiment, make dirs.
+    :param dirs (list): directors list 
+    :param resume (bool):  是否继续试验，默认是False
+    :return: 
+    """
+    for dir_path in dirs:
+        if resume:
+            assert dir_path.exists()
+        else:
+            dir_path.mkdir(parents=True, exist_ok=True)
+
+
+def set_requires_grad(nets, requires_grad=False):
+    """
+    :param nets: list of networks
+    :param requires_grad: 
+    :return: 
+    """
+    if not isinstance(nets, list):
+        nets = [nets]
+
+    for net in nets:
+        if net is not None:
+            for param in net.parameters():
+                param.requires_grad = requires_grad
+
+
+def compute_STOI(clean_signal, noisy_signal, sr=16000):
+    return stoi(clean_signal, noisy_signal, sr, extended=False)
+
+
+def compute_PESQ(clean_signal, noisy_signal, sr=16000):
+    return pesq(clean_signal, noisy_signal, sr)
 
 
 def create_data_list(cleanRoot, noisyRoot):
@@ -85,29 +146,24 @@ def sample_fixed_length_data_aligned(data_a, data_b, sample_length):
     return data_a[start:end], data_b[start:end]
 
 
-def prepare_empty_dir(dirs, resume=False):
-    """
-    if resume experiment, assert the dirs exist,
-    if not resume experiment, make dirs.
-    :param dirs (list): directors list 
-    :param resume (bool):  是否继续试验，默认是False
-    :return: 
-    """
-    for dir_path in dirs:
-        if resume:
-            assert dir_path.exists()
-        else:
-            dir_path.mkdir(parents=True, exist_ok=True)
+def timit_trans():
+    # 下载的TIMIT可能无法直接使用,需要用此脚本转换一下
+    path = '/home/lisen/uestc/Research/Dataset/TIMIT/TRAIN/*/*/*.WAV'
+    sph_files = glob.glob(path)
+    print(len(sph_files), "train utterences")
+    for i in sph_files:
+        sph = SPHFile(i)
+        sph.write_wav(filename=i.replace(".WAV", "_.wav"))  # _不能删除
+        os.remove(i)
+    path = '/home/lisen/uestc/Research/Dataset/TIMIT/TEST/*/*/*.WAV'
+    sph_files_test = glob.glob(path)
+    print(len(sph_files_test), "test utterences")
+    for i in sph_files_test:
+        sph = SPHFile(i)
+        sph.write_wav(filename=i.replace(".WAV", "_.wav"))  # _不能删除
+        os.remove(i)
+    print("Completed")
 
-
-# def caculate_length(floder):
-#     files = os.listdir(floder)
-#     count = 0
-#     for file in files:
-#         audio, _ = librosa.load(floder + '/' +file,sr=16000)
-#         if len(audio) >= 16384:
-#             count += 1
-#     print(count)
 
 if __name__ == '__main__':
     pass

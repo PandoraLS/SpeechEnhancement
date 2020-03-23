@@ -9,9 +9,11 @@ import torch
 import numpy as np
 from torch.utils.data import DataLoader
 from util.utils import initialize_config
-from trainer.trainer import GeneralTrainer
+from trainer.trainer import JointTrainer
 
-
+# TODO 目前还未将joint_loss_function写成一个总的Class，只是嵌入到了JointTrainer中了，
+#  下一步需要调整为一个大的class，并且匹配BaseTrainer中的loss_function
+# TODO 训练过程实际上可以修改为学习率逐渐减小的过程
 def main(config, resume):
     
     torch.manual_seed(int(config["seed"]))  # both CPU and CUDA
@@ -41,12 +43,12 @@ def main(config, resume):
 
     loss_function = initialize_config(config["loss_function"])
 
-    trainer = GeneralTrainer(
+    trainer = JointTrainer(
         config=config,
         resume=resume,
         model=model,
         optim=optimizer,
-        loss_fucntion=loss_function,
+        loss_function=loss_function,
         train_dl=train_dataloader,
         validation_dl=validation_dataloader
     )
@@ -62,7 +64,7 @@ if __name__ == '__main__':
     #                     help="Resume experiment from latest checkpoint.")
     # args = parser.parse_args()
     
-    config_path = "config/20200323_simple_cnn.json5"
+    config_path = "config/20200323_joint_simple_cnn.json5"
     
     configuration = json5.load(open(config_path))
     configuration["experiment_name"], _ = os.path.splitext(os.path.basename(config_path))
