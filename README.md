@@ -174,3 +174,7 @@ TODO
 
 This is a open-source project. Fork the project, complete the code and send pull request.
 
+# 语音丢包隐藏部分
+2020年05月29日06点50分
+该部分是基于原来的语音增强模型，先实现一个初级的plc模型
+主要处理的部分是读取语音的操作，模型计划修改为一个比较简单的cnn
