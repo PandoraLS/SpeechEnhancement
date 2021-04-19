@@ -3,9 +3,9 @@
 
 ## 环境配置数据集准备
 ### 环境配置
-基于Anaconda创建环境`speech_enhance`
+基于Anaconda创建环境`py37SE`
 ```bash
-conda create -n speechenhance python=3.7
+conda create -n py37SE python=3.7
 ```
 ```bash
 conda install tensorboard
@@ -15,7 +15,7 @@ pip install -r requirement.txt
 ```bash
 Python 3.7.x
 CUDA 10.1
-Pytorch 1.3
+torch 1.4.0
 ```
 
 ### 数据集
